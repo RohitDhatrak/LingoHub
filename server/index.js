@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const user = require("./routes/user.router");
+const chatRoom = require("./routes/chatRoom.router");
+const message = require("./routes/message.router");
 const { routeNotFound } = require("./middlewares/route-not-found.middleware");
 const { errorHandler } = require("./middlewares/error-handler.middleware");
 const { initializeDBConnection } = require("./db/db.connect");
@@ -30,7 +33,9 @@ initializeDBConnection();
 if (process.env.NODE_ENV !== "development") {
     app.use(auth);
 }
-// app.use("/video", video);
+app.use("/user", user);
+app.use("/room", chatRoom);
+app.use("/message", message);
 
 /* Error handlers do not move should be at the end*/
 app.use(routeNotFound);
