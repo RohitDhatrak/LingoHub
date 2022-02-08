@@ -10,8 +10,6 @@ import {
     Button,
 } from "react-native";
 import { Message } from "../components/Message";
-import { ChatRooms } from "../data";
-import { ChatRoom } from "../components/ChatRoom";
 import { useNavigation } from "@react-navigation/native";
 
 export function Chat({ route }) {

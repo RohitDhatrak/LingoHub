@@ -1,7 +1,13 @@
 export function reducer(state, { type, payload }) {
     switch (type) {
         case "SET_USER":
-            return { ...state, user: { ...user, ...payload } };
+            return { ...state, user: { ...state.user, ...payload } };
+        case "SIGN_OUT":
+            return { ...state, user: {}, chatRooms: [] };
+        case "SET_FIND_USERS":
+            return { ...state, findUsers: payload };
+        case "SET_CHAT_ROOMS":
+            return { ...state, chatRooms: payload };
         default:
             return state;
     }

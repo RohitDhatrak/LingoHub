@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { ChatRoom } = require("../models/chatRoom.model");
-const { Message } = require("../models/message.model");
 
 router.route("/:userId").get(async (req, res) => {
     try {
@@ -9,9 +8,10 @@ router.route("/:userId").get(async (req, res) => {
         const rooms = await ChatRoom.find({ members: userId }).sort({
             updatedAt: -1,
         });
-        // for (const room of rooms) {
-
-        // }
+        const promises = rooms.map(async (room) =>
+            room.populate("messages").execPopulate()
+        );
+        await Promise.all(promises);
 
         res.status(200).json({ rooms });
     } catch (err) {
