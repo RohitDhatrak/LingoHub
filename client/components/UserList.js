@@ -2,14 +2,10 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { theme } from "../theme";
-import { User } from "../data";
 import { getLanguageList } from "../utils/getLanguageList";
-// used User context
 
 export function UserList({ user }) {
     const navigation = useNavigation();
-    if (user._id === User._id) return null;
-    if (User.partnersHashMap[user._id]) return null;
 
     return (
         <TouchableOpacity
