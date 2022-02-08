@@ -9,6 +9,7 @@ import { getLanguageList } from "../utils/getLanguageList";
 export function UserList({ user }) {
     const navigation = useNavigation();
     if (user._id === User._id) return null;
+    if (User.partnersHashMap[user._id]) return null;
 
     return (
         <TouchableOpacity

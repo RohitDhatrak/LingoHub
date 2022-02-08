@@ -39,6 +39,9 @@ export function Profile({ route }) {
                     ) : (
                         <TouchableOpacity
                             style={[styles.button, styles.messageButton]}
+                            onPress={() =>
+                                navigation.navigate("Chat", { otherUser: user })
+                            }
                         >
                             <Text>Message</Text>
                         </TouchableOpacity>

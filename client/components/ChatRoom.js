@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { User } from "../data";
 import { theme } from "../theme";
@@ -5,19 +6,26 @@ import { theme } from "../theme";
 // used user context
 
 export function ChatRoom({ room }) {
-    const user =
+    const otherUser =
         room?.members[0]?._id === User?._id
             ? room?.members[1]
             : room?.members[0];
+    const navigation = useNavigation();
 
-    if (!user?._id) return null;
+    if (!otherUser?._id) return null;
 
     return (
-        <TouchableOpacity style={styles.container}>
-            <Image source={{ uri: user.profilePicture }} style={styles.image} />
+        <TouchableOpacity
+            style={styles.container}
+            onPress={() => navigation.navigate("Chat", { otherUser, room })}
+        >
+            <Image
+                source={{ uri: otherUser.profilePicture }}
+                style={styles.image}
+            />
             <View style={styles.textContainer}>
                 <View style={styles.nameBadgeContainer}>
-                    <Text style={styles.name}>{user.name}</Text>
+                    <Text style={styles.name}>{otherUser.name}</Text>
                     {!!room.unreadCount && (
                         <Text style={styles.unreadBadge}>
                             {room.unreadCount}
@@ -26,7 +34,7 @@ export function ChatRoom({ room }) {
                 </View>
                 <View style={styles.msgTimeContainer}>
                     <Text style={styles.message}>
-                        {room.messages[room.messages.length - 1].message}
+                        {room.messages[room.messages.length - 1].body}
                     </Text>
                     <Text style={styles.timeContainer}>
                         {new Date(room.updatedAt).toLocaleTimeString([], {

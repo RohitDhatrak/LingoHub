@@ -4,6 +4,7 @@ import { Find } from "../screens/Find.screen";
 import { Profile } from "../screens/Profile.screen";
 import { EditProfile } from "../screens/EditProfile.screen";
 import { Hub } from "../screens/Hub.screen";
+import { Chat } from "../screens/Chat.screen";
 import { HomeIcon, ProfileIcon, FindIcon } from "../assets/Icons";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -16,7 +17,14 @@ function HubStack() {
             <Stack.Screen
                 name="RoomsList"
                 component={Hub}
-                options={{ title: "Hub" }}
+                options={{ title: "LingoHub" }}
+            />
+            <Stack.Screen
+                name="Chat"
+                component={Chat}
+                options={({ route }) => ({
+                    title: route.params.otherUser.name,
+                })}
             />
         </Stack.Navigator>
     );
@@ -28,7 +36,7 @@ function FindStack() {
             <Stack.Screen
                 name="FindScreen"
                 component={Find}
-                options={{ title: "Find" }}
+                options={{ title: "Find Partners" }}
             />
             <Stack.Screen
                 name="UserProfile"
@@ -45,7 +53,7 @@ function ProfileStack() {
             <Stack.Screen
                 name="ProfileScreen"
                 component={Profile}
-                options={{ title: "Profile" }}
+                options={{ title: "My Profile" }}
             />
             <Stack.Screen
                 name="EditProfileScreen"
@@ -74,7 +82,11 @@ export function Application() {
 
     return (
         <Tabs.Navigator initialRouteName="Hub" screenOptions={iconFuction}>
-            <Tabs.Screen name="Hub" component={Hub} />
+            <Tabs.Screen
+                name="Hub"
+                component={HubStack}
+                options={{ headerShown: false }}
+            />
             <Tabs.Screen
                 name="Find"
                 component={FindStack}
