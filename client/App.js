@@ -6,12 +6,12 @@ import { useAuthentication } from "./utils/useAuthentication";
 import { ReducerContextProvider } from "./context/reducerContext";
 
 export default function App() {
-    const { user } = useAuthentication();
+    // const { user } = useAuthentication();
 
     return (
         <ReducerContextProvider>
             <NavigationContainer>
-                {user ? <Application /> : <Auth />}
+                <Application />
             </NavigationContainer>
         </ReducerContextProvider>
     );

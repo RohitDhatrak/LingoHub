@@ -5938,6 +5938,11 @@ react-native-gesture-handler@~2.1.0:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
+react-native-multiple-select-expo@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/react-native-multiple-select-expo/-/react-native-multiple-select-expo-0.4.5.tgz#9b8f32e130bf6bd1a3ed88ad2743ae4373882eb5"
+  integrity sha512-i1OtFJvGR5GMoXmNrz1VCqFWvKNuScIBt3LdhEQqxDKeG94g/ufOOL+z0Dz8SfpYAUNOEfI14QZFtK+oNKntaA==
+
 react-native-multiple-select@^0.5.7:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/react-native-multiple-select/-/react-native-multiple-select-0.5.7.tgz#4770b465b3d5a14e8120dc4fc8933039ba2a8644"

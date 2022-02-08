@@ -35,6 +35,7 @@ export default {
             firebaseStorageBucket: process.env.FIREBASE_STORAGE_BUCKET,
             firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
             firebaseAppId: process.env.FIREBASE_APP_ID,
+            apiEndpoint: process.env.REACT_APP_API_ENDPOINT,
         },
     },
 };

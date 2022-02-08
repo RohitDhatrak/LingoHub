@@ -1,70 +1,34 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Find } from "../screens/Find.screen";
-import { Profile } from "../screens/Profile.screen";
-import { EditProfile } from "../screens/EditProfile.screen";
-import { Hub } from "../screens/Hub.screen";
-import { Chat } from "../screens/Chat.screen";
+import { Text } from "react-native";
 import { HomeIcon, ProfileIcon, FindIcon } from "../assets/Icons";
-import { createStackNavigator } from "@react-navigation/stack";
+import { useReducerContext } from "../context/reducerContext";
+import { HubStack } from "./Hub.navigator";
+import { FindStack } from "./Find.navigator";
+import { ProfileStack } from "./Profile.navigator";
+import { Auth } from "./Auth.navigation";
+import { getUser } from "../services/userData";
+import { useAuthentication } from "../utils/useAuthentication";
 
 const Tabs = createBottomTabNavigator();
-const Stack = createStackNavigator();
-
-function HubStack() {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen
-                name="RoomsList"
-                component={Hub}
-                options={{ title: "LingoHub" }}
-            />
-            <Stack.Screen
-                name="Chat"
-                component={Chat}
-                options={({ route }) => ({
-                    title: route.params.otherUser.name,
-                })}
-            />
-        </Stack.Navigator>
-    );
-}
-
-function FindStack() {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen
-                name="FindScreen"
-                component={Find}
-                options={{ title: "Find Partners" }}
-            />
-            <Stack.Screen
-                name="UserProfile"
-                component={Profile}
-                options={({ route }) => ({ title: route.params.user.name })}
-            />
-        </Stack.Navigator>
-    );
-}
-
-function ProfileStack() {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen
-                name="ProfileScreen"
-                component={Profile}
-                options={{ title: "My Profile" }}
-            />
-            <Stack.Screen
-                name="EditProfileScreen"
-                component={EditProfile}
-                options={{ title: "Edit Profile" }}
-            />
-        </Stack.Navigator>
-    );
-}
 
 export function Application() {
+    const { user, dispatch } = useReducerContext();
+    const { user: authUser } = useAuthentication();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (authUser?.email) {
+            async function getInitialData() {
+                const { user } = await getUser(authUser.email);
+                dispatch({ type: "SET_USER", payload: user });
+                setIsLoading(false);
+            }
+            getInitialData();
+        }
+        setIsLoading(false);
+    }, [authUser]);
+
     const iconFuction = useCallback(
         ({ route }) => ({
             tabBarIcon: ({ color, size }) => {
@@ -79,6 +43,10 @@ export function Application() {
         }),
         []
     );
+
+    if (isLoading) return <Text>Loading...</Text>;
+
+    if (!user?._id) return <Auth />;
 
     return (
         <Tabs.Navigator initialRouteName="Hub" screenOptions={iconFuction}>
