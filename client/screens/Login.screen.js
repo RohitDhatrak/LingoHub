@@ -10,31 +10,39 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { theme } from "../theme";
+import { useReducerContext } from "../context/reducerContext";
+import { getUser } from "../services/userData";
 
 const auth = getAuth();
 
 export function Login() {
     const navigation = useNavigation();
+    const { dispatch } = useReducerContext();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [error, setError] = useState();
+    const [isLoading, setIsLoading] = useState(false);
 
     const signIn = useCallback(() => {
         async function firebaseSignIn() {
             const emailRegex = /\S+@\S+\.\S+/;
 
-            if (email === "" || password === "") {
+            if (!email?.trim() || !password?.trim()) {
                 setError("Email and password are mandatory");
                 return;
             }
 
-            if (!emailRegex.test(email.toLowerCase())) {
+            if (!emailRegex.test(email?.toLowerCase())) {
                 setError("Enter a valid email address");
                 return;
             }
 
             try {
+                setIsLoading(true);
                 await signInWithEmailAndPassword(auth, email, password);
+                const { user } = await getUser(email);
+                dispatch({ type: "SET_USER", payload: user });
+                setIsLoading(false);
             } catch (error) {
                 if (error.code === "auth/user-not-found")
                     setError("User not found");
@@ -45,6 +53,7 @@ export function Login() {
                         "Account temporarily locked due to too many failed login attempts"
                     );
                 else setError("Some error occured");
+                setIsLoading(false);
             }
         }
         firebaseSignIn();
@@ -84,8 +93,9 @@ export function Login() {
             <TouchableOpacity
                 style={[styles.button, styles.login]}
                 onPress={signIn}
+                disabled={isLoading}
             >
-                <Text>Login</Text>
+                <Text>{isLoading ? "Logging In..." : "Login"}</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={[styles.button, styles.signup]}

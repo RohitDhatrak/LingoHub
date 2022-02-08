@@ -30,10 +30,11 @@ router
             for (const partner of user.partners) {
                 partnersHashMap[partner] = true;
             }
-            res.status(200).json({ user });
+            res.status(200).json({ user: { ...user._doc, partnersHashMap } });
         } catch (err) {
             res.status(500).json({
                 message: "There was some error while getting the user",
+                err,
             });
         }
     })
@@ -50,15 +51,21 @@ router
                     message: "User already exists",
                 });
             }
-            const newUser = new User({ email, name, profilePicture });
+            const newUser = new User({
+                email,
+                name,
+                profilePicture,
+                isOnline: true,
+            });
             await newUser.save();
             res.status(201).json({
-                user: newUser,
+                user: { ...newUser._doc, partnersHashMap: {} },
                 message: "User created successfully",
             });
         } catch (err) {
             res.status(500).json({
                 message: "There was some error while creating the user",
+                err,
             });
         }
     })
@@ -101,6 +108,7 @@ router
         } catch (err) {
             res.status(500).json({
                 message: "There was some error while updating the user",
+                err,
             });
         }
     });

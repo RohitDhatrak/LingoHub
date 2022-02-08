@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {
-    View,
     StyleSheet,
     Text,
     KeyboardAvoidingView,
@@ -10,27 +9,32 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { theme } from "../theme";
+import { createUser } from "../services/userData";
+import { useReducerContext } from "../context/reducerContext";
 
 const auth = getAuth();
 
 export function Signup() {
     const navigation = useNavigation();
+    const { dispatch } = useReducerContext();
     const [email, setEmail] = useState();
+    const [name, setName] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
     const [error, setError] = useState();
+    const [isLoading, setIsLoading] = useState(false);
 
     const signUp = useCallback(() => {
         async function firebaseSignup() {
             const emailRegex = /\S+@\S+\.\S+/;
 
-            if (!emailRegex.test(email.toLowerCase())) {
-                setError("Enter a valid email address");
+            if (!email?.trim() || !password?.trim() || !name?.trim()) {
+                setError("Please fill all the fields");
                 return;
             }
 
-            if (email === "" || password === "") {
-                setError("Email and password are mandatory");
+            if (!emailRegex.test(email?.toLowerCase())) {
+                setError("Enter a valid email address");
                 return;
             }
 
@@ -40,13 +44,18 @@ export function Signup() {
             }
 
             try {
+                setIsLoading(true);
                 await createUserWithEmailAndPassword(auth, email, password);
+                const { user } = await createUser(email, name);
+                dispatch({ type: "SET_USER", payload: user });
+                setIsLoading(false);
             } catch (error) {
                 if (error.code === "auth/weak-password")
                     setError("Password should be atleast 6 characters long");
                 else if (error.code === "auth/email-already-in-use")
                     setError("Email already in use");
-                else setError("Some error occured");
+                else setError("Some error occured while creating your account");
+                setIsLoading(false);
             }
         }
         firebaseSignup();
@@ -63,6 +72,12 @@ export function Signup() {
     return (
         <KeyboardAvoidingView style={styles.container}>
             <Text style={styles.heading}>Signup</Text>
+            <TextInput
+                placeholder="Name"
+                style={styles.input}
+                value={name}
+                onChangeText={(text) => setName(text)}
+            ></TextInput>
             <TextInput
                 placeholder="Email"
                 style={styles.input}
@@ -87,8 +102,9 @@ export function Signup() {
             <TouchableOpacity
                 style={[styles.button, styles.signup]}
                 onPress={signUp}
+                disabled={isLoading}
             >
-                <Text>Signup</Text>
+                <Text>{isLoading ? "Signing up..." : "Signup"}</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={[styles.button, styles.login]}

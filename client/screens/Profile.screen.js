@@ -8,13 +8,13 @@ import {
     Image,
     TouchableOpacity,
 } from "react-native";
-import { User as userData } from "../data";
 import { theme } from "../theme";
 import { getLanguageList } from "../utils/getLanguageList";
-// used User context
+import { useReducerContext } from "../context/reducerContext";
 
 export function Profile({ route }) {
     const navigation = useNavigation();
+    const { user: userData } = useReducerContext();
     const user = route?.params?.user ? route.params.user : userData;
 
     return (
