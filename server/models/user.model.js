@@ -24,6 +24,10 @@ const UserSchema = new Schema(
         partners: [{ type: Schema.Types.ObjectId, ref: "User" }],
         bio: String,
         hobbies: String,
+        isOnline: {
+            type: Boolean,
+            required: [true, "User's isOnline status is required"],
+        },
     },
     { timeseries: true }
 );
