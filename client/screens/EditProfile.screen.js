@@ -111,7 +111,6 @@ export function EditProfile() {
                 styleInputGroup={styles.searchInput}
                 selectText="Known Languages"
                 searchInputPlaceholderText="Search Languages..."
-                fixedHeight={true}
                 submitButtonText=""
                 submitButtonColor="transparent"
             />
@@ -125,7 +124,6 @@ export function EditProfile() {
                     styleInputGroup={styles.searchInput}
                     selectText="Learning"
                     searchInputPlaceholderText="Search Languages..."
-                    fixedHeight={true}
                     submitButtonText=""
                     submitButtonColor="transparent"
                 />
