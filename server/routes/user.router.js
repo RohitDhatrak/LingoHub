@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { User } = require("../models/user.model");
 const { cloudinary } = require("../utils/cloudinary");
+const { usersIndex } = require("../utils/generateSearchIndex");
 
 router.route("/").get(async (req, res) => {
     try {
@@ -102,6 +103,24 @@ router
             user.known = known;
             user.learning = learning;
             await user.save();
+
+            usersIndex.remove(user._id);
+            usersIndex.add(user._id.valueOf(), user.name.trim());
+            if (user?.bio?.trim())
+                usersIndex.appendAsync(user._id.valueOf(), user.bio.trim());
+            if (user?.hobbies?.trim())
+                usersIndex.appendAsync(user._id.valueOf(), user.hobbies.trim());
+            if (user?.known.length !== 0) {
+                for (const language of user.known) {
+                    usersIndex.appendAsync(user._id.valueOf(), language.trim());
+                }
+            }
+            if (user?.learning.length !== 0) {
+                for (const language of user.learning) {
+                    usersIndex.appendAsync(user._id.valueOf(), language.trim());
+                }
+            }
+
             res.status(200).json({
                 message: "User updated successfully",
             });

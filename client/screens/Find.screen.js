@@ -1,28 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import { SearchBar } from "../components/SearchBar";
 import { UserList } from "../components/UserList";
 import { useReducerContext } from "../context/reducerContext";
 import { getUsers } from "../services/userData";
+import { getSearchData } from "../services/search";
 
 export function Find() {
     const { findUsers, dispatch, user } = useReducerContext();
     const [clicked, setClicked] = useState();
     const [searchPhrase, setSearchPhrase] = useState();
-    const filteredUsers = findUsers.filter(
+    const [searchResults, setSearchResults] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+    const arraytoBeFiltered =
+        searchPhrase && searchResults ? searchResults : findUsers;
+    const filteredUsers = arraytoBeFiltered.filter(
         (partner) =>
             !(partner._id === user._id || user.partnersHashMap[partner._id])
     );
 
     useEffect(() => {
         async function fetchUsers() {
+            setIsLoading(true);
             const { users } = await getUsers();
             dispatch({ type: "SET_FIND_USERS", payload: users });
+            setIsLoading(false);
         }
         fetchUsers();
     }, []);
 
-    if (filteredUsers.length === 0)
+    useEffect(() => {
+        if (searchResults) {
+            setSearchResults(null);
+        }
+    }, [searchPhrase]);
+
+    const getSearchResults = useCallback(() => {
+        if (searchPhrase?.trim()) {
+            async function getData() {
+                const { users } = await getSearchData(searchPhrase);
+                setSearchResults(users);
+            }
+            getData();
+        }
+    }, [searchPhrase]);
+
+    if (isLoading)
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <Text>Loading...</Text>
+            </View>
+        );
+
+    if (!searchPhrase && filteredUsers?.length === 0)
         return (
             <View
                 style={{
@@ -42,7 +78,19 @@ export function Find() {
                 setClicked={setClicked}
                 searchPhrase={searchPhrase}
                 setSearchPhrase={setSearchPhrase}
+                getSearchResults={getSearchResults}
             />
+            {!!searchPhrase && searchResults?.length === 0 && (
+                <View
+                    style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Text>No results match your search</Text>
+                </View>
+            )}
             <FlatList
                 data={filteredUsers}
                 keyExtractor={(item) => item._id}

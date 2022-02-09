@@ -8,6 +8,7 @@ export function SearchBar({
     setClicked,
     searchPhrase,
     setSearchPhrase,
+    getSearchResults,
 }) {
     return (
         <View style={styles.container}>
@@ -19,12 +20,13 @@ export function SearchBar({
             />
             <TextInput
                 style={styles.input}
-                placeholder="Search"
+                placeholder="Search for users"
                 value={searchPhrase}
                 onChangeText={setSearchPhrase}
                 onFocus={() => {
                     setClicked(true);
                 }}
+                onSubmitEditing={getSearchResults}
             />
             {clicked && (
                 <Entypo
