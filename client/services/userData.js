@@ -34,3 +34,23 @@ export async function getUsers(email) {
         console.log({ error });
     }
 }
+
+export async function updateUser(
+    email,
+    name,
+    profilePicture,
+    bio,
+    hobbies,
+    known,
+    learning
+) {
+    try {
+        const response = await axios.patch(
+            `${Constants.manifest?.extra?.apiEndpoint}/user/${email}`,
+            { name, profilePicture, bio, hobbies, known, learning }
+        );
+        return response.data;
+    } catch (error) {
+        console.log({ error });
+    }
+}

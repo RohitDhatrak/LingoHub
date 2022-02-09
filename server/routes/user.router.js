@@ -82,7 +82,7 @@ router
                 });
             }
 
-            if (profilePicture !== user.profilePicture) {
+            if (!!profilePicture && profilePicture !== user.profilePicture) {
                 const { url } = await cloudinary.uploader.upload(
                     profilePicture,
                     {

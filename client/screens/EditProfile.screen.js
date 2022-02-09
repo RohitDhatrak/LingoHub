@@ -11,26 +11,27 @@ import {
     ScrollView,
     TouchableOpacity,
 } from "react-native";
-import { User, Languages } from "../data";
 import { theme } from "../theme";
-
-// used User context
+import { useReducerContext } from "../context/reducerContext";
+import { updateUser } from "../services/userData";
 
 export function EditProfile() {
     const auth = getAuth();
-    const [name, setName] = useState(User.name);
-    const [bio, setBio] = useState(User.bio);
-    const [hobbies, setHobbies] = useState(User.hobbies);
-    const [known, setKnown] = useState(User.known);
-    const [learning, setLearning] = useState(User.learning);
-    const [profilePicture, setProfilePicture] = useState(User.profilePicture);
     const navigation = useNavigation();
+    const { user, dispatch, languages } = useReducerContext();
+    const [name, setName] = useState(user.name);
+    const [bio, setBio] = useState(user.bio);
+    const [hobbies, setHobbies] = useState(user.hobbies);
+    const [known, setKnown] = useState(user.known);
+    const [learning, setLearning] = useState(user.learning);
+    const [profilePicture, setProfilePicture] = useState(user.profilePicture);
+    const [loading, setLoading] = useState(false);
 
     const logOut = useCallback(() => {
         async function firebaseSignout() {
             try {
                 await signOut(auth);
-                // navigation.navigate()
+                dispatch({ type: "SIGN_OUT" });
             } catch (error) {
                 console.log(error);
             }
@@ -38,16 +39,53 @@ export function EditProfile() {
         firebaseSignout();
     }, []);
 
+    const saveChanges = useCallback(() => {
+        async function saveData() {
+            try {
+                setLoading(true);
+                await updateUser(
+                    user.email,
+                    name,
+                    profilePicture,
+                    bio,
+                    hobbies,
+                    known,
+                    learning
+                );
+                dispatch({
+                    type: "SET_USER",
+                    payload: {
+                        name,
+                        profilePicture,
+                        bio,
+                        hobbies,
+                        known,
+                        learning,
+                    },
+                });
+                setLoading(false);
+                navigation.navigate("ProfileScreen");
+            } catch (error) {
+                console.log(error);
+                setLoading(false);
+            }
+        }
+        saveData();
+    }, [user, name, profilePicture, bio, hobbies, known, learning]);
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.imageContainer}>
                 <Image
-                    source={{ uri: User.profilePicture }}
+                    source={{ uri: user.profilePicture }}
                     style={styles.image}
                 />
                 <View style={styles.buttonsContainer}>
-                    <TouchableOpacity style={[styles.button, styles.save]}>
-                        <Text>Save</Text>
+                    <TouchableOpacity
+                        style={[styles.button, styles.save]}
+                        onPress={saveChanges}
+                    >
+                        <Text>{loading ? "Saving..." : "Save"}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.button, styles.logout]}
@@ -65,7 +103,7 @@ export function EditProfile() {
                 onChangeText={(text) => setName(text)}
             ></TextInput>
             <MultiSelect
-                items={Languages}
+                items={languages}
                 uniqueKey="name"
                 onSelectedItemsChange={setKnown}
                 selectedItems={known}
@@ -79,7 +117,7 @@ export function EditProfile() {
             />
             <View style={{ marginTop: 20 }}>
                 <MultiSelect
-                    items={Languages}
+                    items={languages}
                     uniqueKey="name"
                     onSelectedItemsChange={setLearning}
                     selectedItems={learning}
