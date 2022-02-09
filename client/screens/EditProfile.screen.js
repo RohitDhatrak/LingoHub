@@ -10,6 +10,7 @@ import {
     Image,
     ScrollView,
     TouchableOpacity,
+    Alert,
 } from "react-native";
 import { theme } from "../theme";
 import { useReducerContext } from "../context/reducerContext";
@@ -33,7 +34,7 @@ export function EditProfile() {
                 await signOut(auth);
                 dispatch({ type: "SIGN_OUT" });
             } catch (error) {
-                console.log(error);
+                Alert.alert("Error", "Some error occured while signing out");
             }
         }
         firebaseSignout();
@@ -66,7 +67,7 @@ export function EditProfile() {
                 setLoading(false);
                 navigation.navigate("ProfileScreen");
             } catch (error) {
-                console.log(error);
+                Alert.alert("Error", "Some error occured while saving data");
                 setLoading(false);
             }
         }
