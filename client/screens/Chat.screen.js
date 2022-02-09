@@ -3,7 +3,6 @@ import uuid from "react-native-uuid";
 import {
     View,
     Text,
-    ScrollView,
     FlatList,
     StyleSheet,
     TextInput,
@@ -20,7 +19,11 @@ export function Chat({ route }) {
     const { chatRooms, user, dispatch } = useReducerContext();
     const receiver = route.params.otherUser;
     const [chatRoom, setChatRoom] = useState(
-        chatRooms.find((chatRoom) => chatRoom.members.includes(receiver._id))
+        chatRooms.find(
+            (chatRoom) =>
+                chatRoom.members[0]._id === receiver._id ||
+                chatRoom.members[1]._id === receiver._id
+        )
     );
     const [message, setMessage] = useState("");
     const navigation = useNavigation();
@@ -33,8 +36,6 @@ export function Chat({ route }) {
         return () =>
             navigation.getParent()?.setOptions({ tabBarStyle: undefined });
     }, [navigation]);
-
-    console.log(chatRoom);
 
     const sendMessageHandler = useCallback(() => {
         async function sendData() {
@@ -70,12 +71,17 @@ export function Chat({ route }) {
                     });
                 }
             } catch (error) {
-                console.log({ error });
-                // setChatRoom(
-                //     chatRooms.find((chatRoom) =>
-                //         chatRoom.members.includes(receiver._id)
-                //     )
-                // );
+                if (chatRoom) {
+                    setChatRoom(
+                        chatRooms.find(
+                            (chatRoom) =>
+                                chatRoom.members[0]._id === receiver._id ||
+                                chatRoom.members[1]._id === receiver._id
+                        )
+                    );
+                } else {
+                    setChatRoom({ messages: [] });
+                }
                 Alert.alert(
                     "Error",
                     "Some error occured while sending your message"
@@ -117,7 +123,7 @@ export function Chat({ route }) {
                     value={message}
                     onChangeText={(text) => setMessage(text)}
                     onPressIn={() => listRef.current.scrollToEnd()}
-                    // onSubmitEditing={sendMessageHandler}
+                    onSubmitEditing={sendMessageHandler}
                 />
                 <Button onPress={sendMessageHandler} title="Send" />
             </KeyboardAvoidingView>
@@ -126,9 +132,6 @@ export function Chat({ route }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        paddingVertical: 20,
-    },
     contentContainer: {
         flexGrow: 1,
     },
