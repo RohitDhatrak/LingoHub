@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, Text, FlatList } from "react-native";
+import { StyleSheet, View, Text, FlatList, Alert } from "react-native";
 import { SearchBar } from "../components/SearchBar";
 import { UserList } from "../components/UserList";
 import { useReducerContext } from "../context/reducerContext";
@@ -21,10 +21,17 @@ export function Find() {
 
     useEffect(() => {
         async function fetchUsers() {
-            setIsLoading(true);
-            const { users } = await getUsers();
-            dispatch({ type: "SET_FIND_USERS", payload: users });
-            setIsLoading(false);
+            try {
+                setIsLoading(true);
+                const { users } = await getUsers();
+                dispatch({ type: "SET_FIND_USERS", payload: users });
+                setIsLoading(false);
+            } catch (error) {
+                Alert.alert(
+                    "Error",
+                    "Something went wrong while loading users"
+                );
+            }
         }
         fetchUsers();
     }, []);
@@ -38,8 +45,15 @@ export function Find() {
     const getSearchResults = useCallback(() => {
         if (searchPhrase?.trim()) {
             async function getData() {
-                const { users } = await getSearchData(searchPhrase);
-                setSearchResults(users);
+                try {
+                    const { users } = await getSearchData(searchPhrase);
+                    setSearchResults(users);
+                } catch (error) {
+                    Alert.alert(
+                        "Error",
+                        "Something went wrong while searching"
+                    );
+                }
             }
             getData();
         }

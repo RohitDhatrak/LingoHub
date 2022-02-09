@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import { HomeIcon, ProfileIcon, FindIcon } from "../assets/Icons";
 import { useReducerContext } from "../context/reducerContext";
 import { HubStack } from "./Hub.navigator";
@@ -20,9 +20,16 @@ export function Application() {
     useEffect(() => {
         if (authUser?.email) {
             async function getInitialData() {
-                const { user } = await getUser(authUser.email);
-                dispatch({ type: "SET_USER", payload: user });
-                setIsLoading(false);
+                try {
+                    const { user } = await getUser(authUser.email);
+                    dispatch({ type: "SET_USER", payload: user });
+                    setIsLoading(false);
+                } catch (error) {
+                    Alert.alert(
+                        "Error",
+                        "Something went wrong while loading your data"
+                    );
+                }
             }
             getInitialData();
         }
