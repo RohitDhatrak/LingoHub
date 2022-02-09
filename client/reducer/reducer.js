@@ -8,6 +8,24 @@ export function reducer(state, { type, payload }) {
             return { ...state, findUsers: payload };
         case "SET_CHAT_ROOMS":
             return { ...state, chatRooms: payload };
+        case "ADD_CHAT_ROOM":
+            return { ...state, chatRooms: [payload, ...state.chatRooms] };
+        case "ADD_MESSAGE":
+            const newChatRoom = {
+                ...state.chatRooms.find(
+                    ({ _id }) => _id === payload.chatRoomId
+                ),
+            };
+            newChatRoom.messages.push(payload.message);
+            const chatRoomIndex = state.chatRooms.findIndex(
+                ({ _id }) => _id === payload.chatRoomId
+            );
+            const newChatRooms = [...state.chatRooms].splice(
+                chatRoomIndex,
+                1,
+                newChatRoom
+            );
+            return { ...state, chatRooms: newChatRooms };
         default:
             return state;
     }

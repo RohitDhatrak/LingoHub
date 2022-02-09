@@ -2,20 +2,18 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { theme } from "../theme";
 
-export function Message({ message, otherUser }) {
+export function Message({ message, receiver }) {
     return (
         <View
             style={[
                 styles.container,
-                message.sender === otherUser._id
-                    ? styles.received
-                    : styles.sent,
+                message.sender === receiver._id ? styles.received : styles.sent,
             ]}
         >
             <Text
                 style={[
                     styles.message,
-                    message.sender === otherUser._id
+                    message.sender === receiver._id
                         ? styles.receivedBody
                         : styles.sentBody,
                 ]}

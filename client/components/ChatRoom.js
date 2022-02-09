@@ -1,15 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { User } from "../data";
 import { theme } from "../theme";
-
-// used user context
+import { useReducerContext } from "../context/reducerContext";
 
 export function ChatRoom({ room }) {
+    const { user } = useReducerContext();
     const otherUser =
-        room?.members[0]?._id === User?._id
+        room?.members[0]?._id === user?._id
             ? room?.members[1]
             : room?.members[0];
+    const unreadCountIndex = room?.members[0]?._id === user?._id ? 0 : 1;
     const navigation = useNavigation();
 
     if (!otherUser?._id) return null;
@@ -26,9 +26,9 @@ export function ChatRoom({ room }) {
             <View style={styles.textContainer}>
                 <View style={styles.nameBadgeContainer}>
                     <Text style={styles.name}>{otherUser.name}</Text>
-                    {!!room.unreadCount && (
+                    {!!room.unreadCount[unreadCountIndex] && (
                         <Text style={styles.unreadBadge}>
-                            {room.unreadCount}
+                            {room.unreadCount[unreadCountIndex]}
                         </Text>
                     )}
                 </View>
