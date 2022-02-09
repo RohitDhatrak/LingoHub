@@ -33,7 +33,9 @@ export function Application() {
             }
             getInitialData();
         }
-        setIsLoading(false);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
     }, [authUser]);
 
     const iconFuction = useCallback(
