@@ -29,7 +29,7 @@ const UserSchema = new Schema(
             required: [true, "User's isOnline status is required"],
         },
     },
-    { timeseries: true }
+    { timestamps: true }
 );
 
 const User = model("User", UserSchema);

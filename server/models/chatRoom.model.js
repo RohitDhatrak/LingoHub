@@ -12,8 +12,9 @@ const ChatRoomSchema = new Schema(
             },
         ],
         messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
+        unreadCount: [Number],
     },
-    { timeseries: true }
+    { timestamps: true }
 );
 
 const ChatRoom = model("ChatRoom", ChatRoomSchema);

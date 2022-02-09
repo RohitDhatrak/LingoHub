@@ -23,7 +23,7 @@ const MessageSchema = new Schema(
             required: [true, "The message isRead status is required"],
         },
     },
-    { timeseries: true }
+    { timestamps: true }
 );
 
 const Message = model("Message", MessageSchema);
