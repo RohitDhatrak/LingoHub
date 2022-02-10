@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+    useState,
+    useEffect,
+    useRef,
+    useCallback,
+    useMemo,
+} from "react";
 import uuid from "react-native-uuid";
 import {
     View,
@@ -22,9 +28,19 @@ export function Chat({ route, sendRealTimeMessage }) {
     const [message, setMessage] = useState("");
     const navigation = useNavigation();
     const listRef = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        async function markMessagesAsRead() {
+    function messageFunction({ item }) {
+        return <Message message={item} receiver={receiver} />;
+    }
+
+    const memoizedMessage = useMemo(
+        () => messageFunction,
+        [chatRoom, receiver]
+    );
+
+    const markMessagesAsRead = useCallback(() => {
+        async function callAsyncFunc() {
             if (chatRoom?._id) {
                 try {
                     dispatch({
@@ -40,6 +56,10 @@ export function Chat({ route, sendRealTimeMessage }) {
                 }
             }
         }
+        callAsyncFunc();
+    }, [chatRoom]);
+
+    useEffect(() => {
         markMessagesAsRead();
         return () => {
             dispatch({ type: "SET_CHAT_ROOM", payload: {} });
@@ -58,6 +78,7 @@ export function Chat({ route, sendRealTimeMessage }) {
     const sendMessageHandler = useCallback(() => {
         async function sendData() {
             try {
+                markMessagesAsRead();
                 const messageObject = {
                     _id: uuid.v4(),
                     createdAt: new Date(),
@@ -65,8 +86,8 @@ export function Chat({ route, sendRealTimeMessage }) {
                     sender: user._id,
                     roomId: chatRoom?._id,
                 };
-                sendRealTimeMessage(messageObject, receiver._id);
                 if (chatRoom?._id) {
+                    sendRealTimeMessage(messageObject, receiver._id);
                     dispatch({
                         type: "SET_CHAT_ROOM",
                         payload: {
@@ -75,6 +96,7 @@ export function Chat({ route, sendRealTimeMessage }) {
                         },
                     });
                 } else {
+                    setIsLoading(true);
                     dispatch({
                         type: "SET_CHAT_ROOM",
                         payload: {
@@ -90,7 +112,9 @@ export function Chat({ route, sendRealTimeMessage }) {
                     user._id,
                     message
                 );
+                setIsLoading(false);
                 if (room) {
+                    sendRealTimeMessage(null, receiver._id, room);
                     dispatch({ type: "ADD_CHAT_ROOM", payload: room });
                     dispatch({
                         type: "SET_CHAT_ROOM",
@@ -103,6 +127,7 @@ export function Chat({ route, sendRealTimeMessage }) {
                     });
                 }
             } catch (error) {
+                setIsLoading(false);
                 dispatch({
                     type: "RESET_CHAT_ROOM",
                 });
@@ -123,10 +148,15 @@ export function Chat({ route, sendRealTimeMessage }) {
                 keyExtractor={(item) => item._id}
                 contentContainerStyle={styles.contentContainer}
                 ref={listRef}
-                onContentSizeChange={() => listRef.current.scrollToEnd()}
-                renderItem={({ item }) => (
-                    <Message message={item} receiver={receiver} />
-                )}
+                onContentSizeChange={() =>
+                    listRef.current.scrollToEnd({
+                        animated: true,
+                        scroll: "smooth",
+                    })
+                }
+                renderItem={memoizedMessage}
+                initialNumToRender={10}
+                removeClippedSubviews
             ></FlatList>
             {(!chatRoom || chatRoom?.messages?.length === 0) && (
                 <View

@@ -29,10 +29,14 @@ const io = socketio(server);
 io.on("connection", (socket) => {
     socket.on("saveUser", (userId) => addUser(userId, socket.id));
     socket.on("disconnect", () => removeUser(socket.id));
-    socket.on("sendMessage", ({ message, receiverId }) => {
-        console.log("message", message, receiverId);
+    socket.on("sendMessage", ({ message, receiverId, room }) => {
         const receiverSocketId = getReceiver(receiverId);
-        io.to(receiverSocketId).emit("getMessage", { message });
+        if (message) {
+            io.to(receiverSocketId).emit("getMessage", { message });
+        }
+        if (room) {
+            io.to(receiverSocketId).emit("getMessage", { room });
+        }
     });
 });
 

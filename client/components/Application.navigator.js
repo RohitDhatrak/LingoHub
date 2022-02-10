@@ -35,8 +35,8 @@ export function Application() {
             transports: ["websocket"],
             jsonp: false,
         });
-        socket.current.on("getMessage", ({ message }) => {
-            if (message.roomId) {
+        socket.current.on("getMessage", ({ message, room }) => {
+            if (message) {
                 dispatch({
                     type: "ADD_RECEIVED_MESSAGE",
                     payload: {
@@ -44,6 +44,9 @@ export function Application() {
                         message: message,
                     },
                 });
+            }
+            if (room) {
+                dispatch({ type: "ADD_CHAT_ROOM", payload: room });
             }
         });
     }, []);
@@ -69,8 +72,8 @@ export function Application() {
         }, 1000);
     }, [authUser]);
 
-    function sendRealTimeMessage(message, receiverId) {
-        socket.current.emit("sendMessage", { message, receiverId });
+    function sendRealTimeMessage(message, receiverId, room) {
+        socket.current.emit("sendMessage", { message, receiverId, room });
     }
 
     const iconFuction = useCallback(
