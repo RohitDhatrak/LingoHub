@@ -11,3 +11,15 @@ export async function getChatRooms(userId) {
         console.log({ error });
     }
 }
+
+export async function markAsRead(userId, roomId) {
+    try {
+        const response = await axios.post(
+            `${Constants.manifest?.extra?.apiEndpoint}/room/${userId}`,
+            { roomId }
+        );
+        return response.data;
+    } catch {
+        console.log({ error });
+    }
+}

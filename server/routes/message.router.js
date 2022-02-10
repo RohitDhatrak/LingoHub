@@ -33,7 +33,6 @@ router.route("/:roomId").post(async (req, res) => {
                     sender: senderId,
                     roomId: newRoom._id,
                     body,
-                    isRead: false,
                 });
                 await newMessage.save();
 
@@ -41,6 +40,7 @@ router.route("/:roomId").post(async (req, res) => {
                 newRoom.unreadCount = [0, 1];
                 await newRoom.save();
                 await newRoom.populate("messages");
+                await newRoom.populate("members");
                 res.status(200).json({
                     message: newMessage,
                     room: newRoom,
@@ -56,7 +56,6 @@ router.route("/:roomId").post(async (req, res) => {
                 sender: senderId,
                 roomId: roomId,
                 body,
-                isRead: false,
             });
             await newMessage.save();
 

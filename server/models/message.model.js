@@ -18,10 +18,6 @@ const MessageSchema = new Schema(
             type: String,
             required: [true, "The message body is required"],
         },
-        isRead: {
-            type: Boolean,
-            required: [true, "The message isRead status is required"],
-        },
     },
     { timestamps: true }
 );

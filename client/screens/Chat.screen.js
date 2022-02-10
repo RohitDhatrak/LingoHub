@@ -14,6 +14,7 @@ import { Message } from "../components/Message";
 import { useNavigation } from "@react-navigation/native";
 import { useReducerContext } from "../context/reducerContext";
 import { sendMessage } from "../services/message";
+import { markAsRead } from "../services/chatRooms";
 
 export function Chat({ route }) {
     const { chatRooms, user, dispatch } = useReducerContext();
@@ -28,6 +29,26 @@ export function Chat({ route }) {
     const [message, setMessage] = useState("");
     const navigation = useNavigation();
     const listRef = useRef(null);
+
+    useEffect(() => {
+        async function markMessagesAsRead() {
+            if (chatRoom._id) {
+                try {
+                    dispatch({
+                        type: "MARK_CHAT_ROOM_AS_READ",
+                        payload: chatRoom._id,
+                    });
+                    await markAsRead(user._id, chatRoom._id);
+                } catch (error) {
+                    Alert.alert(
+                        "Error",
+                        "Something went wrong while synchronizing messages"
+                    );
+                }
+            }
+        }
+        markMessagesAsRead();
+    }, [chatRoom]);
 
     useEffect(() => {
         navigation
@@ -71,17 +92,14 @@ export function Chat({ route }) {
                     });
                 }
             } catch (error) {
-                if (chatRoom) {
-                    setChatRoom(
-                        chatRooms.find(
-                            (chatRoom) =>
-                                chatRoom.members[0]._id === receiver._id ||
-                                chatRoom.members[1]._id === receiver._id
-                        )
-                    );
-                } else {
-                    setChatRoom({ messages: [] });
-                }
+                setChatRoom(
+                    chatRooms.find(
+                        (chatRoom) =>
+                            chatRoom.members[0]._id === receiver._id ||
+                            chatRoom.members[1]._id === receiver._id
+                    )
+                );
+
                 Alert.alert(
                     "Error",
                     "Some error occured while sending your message"
@@ -132,6 +150,9 @@ export function Chat({ route }) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        marginTop: 10,
+    },
     contentContainer: {
         flexGrow: 1,
     },

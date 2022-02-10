@@ -20,12 +20,23 @@ export function reducer(state, { type, payload }) {
             const chatRoomIndex = state.chatRooms.findIndex(
                 ({ _id }) => _id === payload.chatRoomId
             );
-            const newChatRooms = [...state.chatRooms].splice(
-                chatRoomIndex,
-                1,
-                newChatRoom
+            const newChatRooms = [...state.chatRooms];
+            newChatRooms.splice(chatRoomIndex, 1);
+            return { ...state, chatRooms: [newChatRoom, ...newChatRooms] };
+        case "MARK_CHAT_ROOM_AS_READ":
+            const room = {
+                ...state.chatRooms.find(({ _id }) => _id === payload),
+            };
+            const unreadIndex = room.members.findIndex(
+                (member) => member._id === state.user._id
             );
-            return { ...state, chatRooms: newChatRooms };
+            room.unreadCount[unreadIndex] = 0;
+            const roomIndex = state.chatRooms.findIndex(
+                ({ _id }) => _id === payload
+            );
+            const newRooms = [...state.chatRooms];
+            newRooms.splice(roomIndex, 1, room);
+            return { ...state, chatRooms: newRooms };
         default:
             return state;
     }
