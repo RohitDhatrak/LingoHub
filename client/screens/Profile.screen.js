@@ -14,7 +14,7 @@ import { useReducerContext } from "../context/reducerContext";
 
 export function Profile({ route }) {
     const navigation = useNavigation();
-    const { user: userData } = useReducerContext();
+    const { user: userData, dispatch } = useReducerContext();
     const user = route?.params?.user ? route.params.user : userData;
 
     return (
@@ -39,9 +39,15 @@ export function Profile({ route }) {
                     ) : (
                         <TouchableOpacity
                             style={[styles.button, styles.messageButton]}
-                            onPress={() =>
-                                navigation.navigate("Chat", { otherUser: user })
-                            }
+                            onPress={() => {
+                                dispatch({
+                                    type: "SET_CHAT_ROOM",
+                                    payload: {},
+                                });
+                                navigation.navigate("Chat", {
+                                    otherUser: user,
+                                });
+                            }}
                         >
                             <Text>Message</Text>
                         </TouchableOpacity>

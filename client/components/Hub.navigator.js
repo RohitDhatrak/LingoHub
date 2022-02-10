@@ -3,7 +3,7 @@ import { Hub } from "../screens/Hub.screen";
 import { Chat } from "../screens/Chat.screen";
 const Stack = createStackNavigator();
 
-export function HubStack() {
+export function HubStack({ sendRealTimeMessage }) {
     return (
         <Stack.Navigator>
             <Stack.Screen
@@ -13,7 +13,13 @@ export function HubStack() {
             />
             <Stack.Screen
                 name="Chat"
-                component={Chat}
+                // component={Chat}
+                children={({ route }) => (
+                    <Chat
+                        sendRealTimeMessage={sendRealTimeMessage}
+                        route={route}
+                    />
+                )}
                 options={({ route }) => ({
                     title: route.params.otherUser.name,
                 })}

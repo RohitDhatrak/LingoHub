@@ -2,9 +2,10 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { theme } from "../theme";
 import { useReducerContext } from "../context/reducerContext";
+const _ = require("lodash");
 
 export function ChatRoom({ room }) {
-    const { user } = useReducerContext();
+    const { user, dispatch } = useReducerContext();
     const otherUser =
         room?.members[0]?._id === user?._id
             ? room?.members[1]
@@ -17,7 +18,10 @@ export function ChatRoom({ room }) {
     return (
         <TouchableOpacity
             style={styles.container}
-            onPress={() => navigation.navigate("Chat", { otherUser, room })}
+            onPress={() => {
+                dispatch({ type: "SET_CHAT_ROOM", payload: _.cloneDeep(room) });
+                navigation.navigate("Chat", { otherUser });
+            }}
         >
             <Image
                 source={{ uri: otherUser.profilePicture }}
@@ -34,7 +38,7 @@ export function ChatRoom({ room }) {
                 </View>
                 <View style={styles.msgTimeContainer}>
                     <Text style={styles.message}>
-                        {room.messages[room.messages.length - 1].body}
+                        {room.messages[room.messages.length - 1]?.body}
                     </Text>
                     <Text style={styles.timeContainer}>
                         {new Date(room.updatedAt).toLocaleTimeString([], {

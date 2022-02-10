@@ -36,6 +36,7 @@ export default {
             firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
             firebaseAppId: process.env.FIREBASE_APP_ID,
             apiEndpoint: process.env.REACT_APP_API_ENDPOINT,
+            socketEndpoint: process.env.REACT_APP_SOCKET_ENDPOINT,
         },
     },
 };

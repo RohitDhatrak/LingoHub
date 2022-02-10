@@ -24,10 +24,10 @@ router.route("/:roomId").post(async (req, res) => {
                 });
                 await newRoom.save();
 
-                user.partners.push(receiverId);
-                partner.partners.push(senderId);
-                await user.save();
-                await partner.save();
+                // user.partners.push(receiverId);
+                // partner.partners.push(senderId);
+                // await user.save();
+                // await partner.save();
 
                 const newMessage = new Message({
                     sender: senderId,

@@ -37,6 +37,48 @@ export function reducer(state, { type, payload }) {
             const newRooms = [...state.chatRooms];
             newRooms.splice(roomIndex, 1, room);
             return { ...state, chatRooms: newRooms };
+        case "SET_CHAT_ROOM":
+            return { ...state, chatRoom: payload };
+        case "RESET_CHAT_ROOM":
+            return {
+                ...state,
+                chatRoom: {
+                    ...chatRooms.find(
+                        (chatRoom) =>
+                            chatRoom.members[0]._id === receiver._id ||
+                            chatRoom.members[1]._id === receiver._id
+                    ),
+                },
+            };
+        case "ADD_RECEIVED_MESSAGE":
+            const newChatroom = {
+                ...state.chatRooms.find(
+                    ({ _id }) => _id === payload.chatRoomId
+                ),
+            };
+            newChatroom.messages.push(payload.message);
+            const unReadIndex = newChatroom.members.findIndex(
+                (member) => member._id === state.user._id
+            );
+            newChatroom.unreadCount[unReadIndex] += 1;
+            const chatroomIndex = state.chatRooms.findIndex(
+                ({ _id }) => _id === payload.chatRoomId
+            );
+            const newChatrooms = [...state.chatRooms];
+            newChatrooms.splice(chatroomIndex, 1);
+            if (payload.message.roomId === state.chatRoom._id) {
+                return {
+                    ...state,
+                    chatRoom: {
+                        ...state.chatRoom,
+                        messages: [...state.chatRoom.messages, payload.message],
+                    },
+                    chatRooms: [newChatroom, ...newChatrooms],
+                };
+            } else {
+                return { ...state, chatRooms: [newChatroom, ...newChatrooms] };
+            }
+
         default:
             return state;
     }
@@ -46,6 +88,7 @@ export const initialState = {
     user: {},
     findUsers: [],
     chatRooms: [],
+    chatRoom: {},
     languages: [
         { name: "English" },
         { name: "French" },

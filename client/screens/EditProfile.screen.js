@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { signOut, getAuth } from "firebase/auth";
-import MultiSelect from "react-native-multiple-select";
+// import MultiSelect from "react-native-multiple-select";
 import {
     View,
     Text,
@@ -103,7 +103,7 @@ export function EditProfile() {
                 value={name}
                 onChangeText={(text) => setName(text)}
             ></TextInput>
-            <MultiSelect
+            {/* <MultiSelect
                 items={languages}
                 uniqueKey="name"
                 onSelectedItemsChange={setKnown}
@@ -128,7 +128,7 @@ export function EditProfile() {
                     submitButtonText=""
                     submitButtonColor="transparent"
                 />
-            </View>
+            </View> */}
             <Text style={[styles.label, { marginTop: 10 }]}>Introduction</Text>
             <TextInput
                 placeholder="Introduction"

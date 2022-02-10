@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Alert, Text } from "react-native";
+import React, { Alert, Text, View } from "react-native";
 import { HomeIcon, ProfileIcon, FindIcon } from "../assets/Icons";
 import { useReducerContext } from "../context/reducerContext";
 import { HubStack } from "./Hub.navigator";
@@ -9,13 +9,44 @@ import { ProfileStack } from "./Profile.navigator";
 import { Auth } from "./Auth.navigation";
 import { getUser } from "../services/userData";
 import { useAuthentication } from "../utils/useAuthentication";
+import Constants from "expo-constants";
+import { io } from "socket.io-client";
 
 const Tabs = createBottomTabNavigator();
 
+if (!window.location) {
+    window.navigator.userAgent = "react-native";
+}
+
 export function Application() {
-    const { user, dispatch } = useReducerContext();
+    const { user, dispatch, chatRoom } = useReducerContext();
     const { user: authUser } = useAuthentication();
+    const socket = useRef();
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (socket.current) {
+            socket.current.emit("saveUser", user._id);
+        }
+    }, [socket, user]);
+
+    useEffect(() => {
+        socket.current = io(Constants.manifest.extra.socketEndpoint, {
+            transports: ["websocket"],
+            jsonp: false,
+        });
+        socket.current.on("getMessage", ({ message }) => {
+            if (message.roomId) {
+                dispatch({
+                    type: "ADD_RECEIVED_MESSAGE",
+                    payload: {
+                        chatRoomId: message.roomId,
+                        message: message,
+                    },
+                });
+            }
+        });
+    }, []);
 
     useEffect(() => {
         if (authUser?.email) {
@@ -38,6 +69,10 @@ export function Application() {
         }, 1000);
     }, [authUser]);
 
+    function sendRealTimeMessage(message, receiverId) {
+        socket.current.emit("sendMessage", { message, receiverId });
+    }
+
     const iconFuction = useCallback(
         ({ route }) => ({
             tabBarIcon: ({ color, size }) => {
@@ -53,7 +88,18 @@ export function Application() {
         []
     );
 
-    if (isLoading) return <Text>Loading...</Text>;
+    if (isLoading)
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <Text>Loading...</Text>
+            </View>
+        );
 
     if (!user?._id) return <Auth />;
 
@@ -61,7 +107,10 @@ export function Application() {
         <Tabs.Navigator initialRouteName="Hub" screenOptions={iconFuction}>
             <Tabs.Screen
                 name="Hub"
-                component={HubStack}
+                // component={HubStack}
+                children={() => (
+                    <HubStack sendRealTimeMessage={sendRealTimeMessage} />
+                )}
                 options={{ headerShown: false }}
             />
             <Tabs.Screen

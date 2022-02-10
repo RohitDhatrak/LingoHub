@@ -16,23 +16,16 @@ import { useReducerContext } from "../context/reducerContext";
 import { sendMessage } from "../services/message";
 import { markAsRead } from "../services/chatRooms";
 
-export function Chat({ route }) {
-    const { chatRooms, user, dispatch } = useReducerContext();
+export function Chat({ route, sendRealTimeMessage }) {
+    const { user, dispatch, chatRoom } = useReducerContext();
     const receiver = route.params.otherUser;
-    const [chatRoom, setChatRoom] = useState(
-        chatRooms.find(
-            (chatRoom) =>
-                chatRoom.members[0]._id === receiver._id ||
-                chatRoom.members[1]._id === receiver._id
-        )
-    );
     const [message, setMessage] = useState("");
     const navigation = useNavigation();
     const listRef = useRef(null);
 
     useEffect(() => {
         async function markMessagesAsRead() {
-            if (chatRoom._id) {
+            if (chatRoom?._id) {
                 try {
                     dispatch({
                         type: "MARK_CHAT_ROOM_AS_READ",
@@ -48,7 +41,11 @@ export function Chat({ route }) {
             }
         }
         markMessagesAsRead();
-    }, [chatRoom]);
+        return () => {
+            dispatch({ type: "SET_CHAT_ROOM", payload: {} });
+            markMessagesAsRead();
+        };
+    }, []);
 
     useEffect(() => {
         navigation
@@ -66,14 +63,25 @@ export function Chat({ route }) {
                     createdAt: new Date(),
                     body: message,
                     sender: user._id,
+                    roomId: chatRoom?._id,
                 };
-                if (chatRoom) {
-                    setChatRoom({
-                        ...chatRoom,
-                        messages: [...chatRoom.messages, messageObject],
+                sendRealTimeMessage(messageObject, receiver._id);
+                if (chatRoom?._id) {
+                    dispatch({
+                        type: "SET_CHAT_ROOM",
+                        payload: {
+                            ...chatRoom,
+                            messages: [...chatRoom.messages, messageObject],
+                        },
                     });
                 } else {
-                    setChatRoom({ messages: [messageObject] });
+                    dispatch({
+                        type: "SET_CHAT_ROOM",
+                        payload: {
+                            ...chatRoom,
+                            messages: [messageObject],
+                        },
+                    });
                 }
                 setMessage("");
                 const { message: msg, room } = await sendMessage(
@@ -84,7 +92,10 @@ export function Chat({ route }) {
                 );
                 if (room) {
                     dispatch({ type: "ADD_CHAT_ROOM", payload: room });
-                    setChatRoom(room);
+                    dispatch({
+                        type: "SET_CHAT_ROOM",
+                        payload: room,
+                    });
                 } else {
                     dispatch({
                         type: "ADD_MESSAGE",
@@ -92,14 +103,9 @@ export function Chat({ route }) {
                     });
                 }
             } catch (error) {
-                setChatRoom(
-                    chatRooms.find(
-                        (chatRoom) =>
-                            chatRoom.members[0]._id === receiver._id ||
-                            chatRoom.members[1]._id === receiver._id
-                    )
-                );
-
+                dispatch({
+                    type: "RESET_CHAT_ROOM",
+                });
                 Alert.alert(
                     "Error",
                     "Some error occured while sending your message"
