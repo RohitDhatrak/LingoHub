@@ -129,6 +129,19 @@ router
                 err,
             });
         }
+    })
+    .delete(async (req, res) => {
+        try {
+            let { email } = req.params;
+            email = email.toLowerCase();
+            await User.deleteOne({ email });
+            res.status(200).json({ message: "User deleted successfully" });
+        } catch (err) {
+            res.status(500).json({
+                message: "There was some error while deleting the user",
+                err,
+            });
+        }
     });
 
 module.exports = router;

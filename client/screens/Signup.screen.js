@@ -45,8 +45,8 @@ export function Signup() {
 
             try {
                 setIsLoading(true);
-                await createUserWithEmailAndPassword(auth, email, password);
                 const { user } = await createUser(email, name);
+                await createUserWithEmailAndPassword(auth, email, password);
                 dispatch({ type: "SET_USER", payload: user });
                 setIsLoading(false);
             } catch (error) {
@@ -58,7 +58,11 @@ export function Signup() {
                 setIsLoading(false);
             }
         }
-        firebaseSignup();
+        try {
+            firebaseSignup();
+        } catch (err) {
+            console.log(err);
+        }
     }, [email, password, confirmPassword, auth]);
 
     useEffect(() => {

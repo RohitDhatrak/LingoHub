@@ -14,9 +14,9 @@ import { io } from "socket.io-client";
 
 const Tabs = createBottomTabNavigator();
 
-if (!window.location) {
-    window.navigator.userAgent = "react-native";
-}
+// if (!window.location) {
+//     window.navigator.userAgent = "react-native";
+// }
 
 export function Application() {
     const { user, dispatch, chatRoom } = useReducerContext();
@@ -59,6 +59,7 @@ export function Application() {
                     dispatch({ type: "SET_USER", payload: user });
                     setIsLoading(false);
                 } catch (error) {
+                    setIsLoading(false);
                     Alert.alert(
                         "Error",
                         "Something went wrong while loading your data"
@@ -69,7 +70,7 @@ export function Application() {
         }
         setTimeout(() => {
             setIsLoading(false);
-        }, 1000);
+        }, 2000);
     }, [authUser]);
 
     function sendRealTimeMessage(message, receiverId, room) {
@@ -110,7 +111,6 @@ export function Application() {
         <Tabs.Navigator initialRouteName="Hub" screenOptions={iconFuction}>
             <Tabs.Screen
                 name="Hub"
-                // component={HubStack}
                 children={() => (
                     <HubStack sendRealTimeMessage={sendRealTimeMessage} />
                 )}

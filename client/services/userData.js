@@ -13,6 +13,17 @@ export async function createUser(email, name) {
     }
 }
 
+export async function deleteUser(email) {
+    try {
+        const response = await axios.delete(
+            `${Constants.manifest?.extra?.apiEndpoint}/user/${email}`
+        );
+        return response.data;
+    } catch (error) {
+        console.log({ error });
+    }
+}
+
 export async function getUser(email) {
     try {
         const response = await axios.get(
