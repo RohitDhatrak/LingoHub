@@ -173,7 +173,11 @@ export function Chat({ route, sendRealTimeMessage }) {
                     onPressIn={() => listRef.current.scrollToEnd()}
                     onSubmitEditing={sendMessageHandler}
                 />
-                <Button onPress={sendMessageHandler} title="Send" />
+                <Button
+                    onPress={sendMessageHandler}
+                    title="Send"
+                    disabled={isLoading}
+                />
             </KeyboardAvoidingView>
         </>
     );
