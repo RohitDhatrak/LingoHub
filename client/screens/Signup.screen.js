@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { theme } from "../theme";
-import { createUser } from "../services/userData";
+import { createUser, deleteUser } from "../services/userData";
 import { useReducerContext } from "../context/reducerContext";
 
 const auth = getAuth();
@@ -50,6 +50,7 @@ export function Signup() {
                 dispatch({ type: "SET_USER", payload: user });
                 setIsLoading(false);
             } catch (error) {
+                await deleteUser(email);
                 if (error.code === "auth/weak-password")
                     setError("Password should be atleast 6 characters long");
                 else if (error.code === "auth/email-already-in-use")
