@@ -56,7 +56,6 @@ router
                 email,
                 name,
                 profilePicture,
-                isOnline: true,
             });
             await newUser.save();
             res.status(201).json({

@@ -1,4 +1,3 @@
-import React from "react";
 import { StyleSheet, TextInput, View, Keyboard } from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
 import { theme } from "../theme";

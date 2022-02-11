@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View, Text, FlatList, Alert } from "react-native";
 import { SearchBar } from "../components/SearchBar";
 import { UserList } from "../components/UserList";

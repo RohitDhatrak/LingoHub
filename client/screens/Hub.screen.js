@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { StyleSheet, View, Text, FlatList, Alert } from "react-native";
 import { ChatRoom } from "../components/ChatRoom";
 import { useReducerContext } from "../context/reducerContext";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {

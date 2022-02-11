@@ -13,7 +13,6 @@ export function HubStack({ sendRealTimeMessage }) {
             />
             <Stack.Screen
                 name="Chat"
-                // component={Chat}
                 children={({ route }) => (
                     <Chat
                         sendRealTimeMessage={sendRealTimeMessage}

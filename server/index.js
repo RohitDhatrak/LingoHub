@@ -15,12 +15,12 @@ const { generateSearchIndex } = require("./utils/generateSearchIndex");
 const { addUser, removeUser, getReceiver } = require("./utils/socket");
 
 const port = process.env.PORT || 4444;
-const whitelist = ["https://enwise.netlify.app"];
-const corsOptions = {
-    origin: whitelist,
-    optionsSuccessStatus: 200,
-    credentials: true,
-};
+// const whitelist = ["https://enwise.netlify.app"];
+// const corsOptions = {
+//     origin: whitelist,
+//     optionsSuccessStatus: 200,
+//     credentials: true,
+// };
 
 const app = express();
 const server = http.createServer(app);

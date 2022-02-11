@@ -1,10 +1,4 @@
-import React, {
-    useState,
-    useEffect,
-    useRef,
-    useCallback,
-    useMemo,
-} from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import uuid from "react-native-uuid";
 import {
     View,
@@ -137,7 +131,7 @@ export function Chat({ route, sendRealTimeMessage }) {
                 );
             }
         }
-        sendData();
+        if (message.trim() !== "") sendData();
     }, [chatRoom, receiver, user, message]);
 
     return (

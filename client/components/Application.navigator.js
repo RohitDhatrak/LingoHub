@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { Alert, Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { HomeIcon, ProfileIcon, FindIcon } from "../assets/Icons";
 import { useReducerContext } from "../context/reducerContext";
 import { HubStack } from "./Hub.navigator";
