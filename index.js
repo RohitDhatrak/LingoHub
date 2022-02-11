@@ -42,9 +42,6 @@ app.use(express.json());
 app.use(cors());
 initializeDBConnection();
 
-if (process.env.NODE_ENV !== "development") {
-    app.use(auth);
-}
 app.use("/user", user);
 app.use("/room", chatRoom);
 app.use("/message", message);
