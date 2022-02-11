@@ -4,23 +4,21 @@ require("dotenv").config();
 const socketio = require("socket.io");
 const http = require("http");
 
-const user = require("./routes/user.router");
-const chatRoom = require("./routes/chatRoom.router");
-const message = require("./routes/message.router");
-const search = require("./routes/search.router");
-const { routeNotFound } = require("./middlewares/route-not-found.middleware");
-const { errorHandler } = require("./middlewares/error-handler.middleware");
-const { initializeDBConnection } = require("./db/db.connect");
-const { generateSearchIndex } = require("./utils/generateSearchIndex");
-const { addUser, removeUser, getReceiver } = require("./utils/socket");
+const user = require("./server/routes/user.router");
+const chatRoom = require("./server/routes/chatRoom.router");
+const message = require("./server/routes/message.router");
+const search = require("./server/routes/search.router");
+const {
+    routeNotFound,
+} = require("./server/middlewares/route-not-found.middleware");
+const {
+    errorHandler,
+} = require("./server/middlewares/error-handler.middleware");
+const { initializeDBConnection } = require("./server/db/db.connect");
+const { generateSearchIndex } = require("./server/utils/generateSearchIndex");
+const { addUser, removeUser, getReceiver } = require("./server/utils/socket");
 
 const port = process.env.PORT || 4444;
-// const whitelist = ["https://enwise.netlify.app"];
-// const corsOptions = {
-//     origin: whitelist,
-//     optionsSuccessStatus: 200,
-//     credentials: true,
-// };
 
 const app = express();
 const server = http.createServer(app);
@@ -41,15 +39,7 @@ io.on("connection", (socket) => {
 });
 
 app.use(express.json());
-if (
-    process.env.NODE_ENV === "development" ||
-    process.env.NODE_ENV === "production-test"
-) {
-    app.use(cors({ origin: true, credentials: true }));
-} else {
-    app.use(cors(corsOptions));
-}
-
+app.use(cors());
 initializeDBConnection();
 
 if (process.env.NODE_ENV !== "development") {
