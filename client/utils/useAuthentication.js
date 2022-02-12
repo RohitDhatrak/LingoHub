@@ -5,6 +5,7 @@ const auth = getAuth();
 
 export function useAuthentication() {
     const [user, setUser] = useState();
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const unsubscribeFromAuthStatuChanged = onAuthStateChanged(
@@ -14,6 +15,7 @@ export function useAuthentication() {
                     setUser(user);
                 } else {
                     setUser(undefined);
+                    setIsLoading(false);
                 }
             }
         );
@@ -23,5 +25,7 @@ export function useAuthentication() {
 
     return {
         user,
+        isLoading,
+        setIsLoading,
     };
 }

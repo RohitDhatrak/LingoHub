@@ -20,9 +20,8 @@ const Tabs = createBottomTabNavigator();
 
 export function Application() {
     const { user, dispatch, chatRoom } = useReducerContext();
-    const { user: authUser } = useAuthentication();
+    const { user: authUser, setIsLoading, isLoading } = useAuthentication();
     const socket = useRef();
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (socket.current) {
@@ -68,9 +67,6 @@ export function Application() {
             }
             getInitialData();
         }
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 2000);
     }, [authUser]);
 
     function sendRealTimeMessage(message, receiverId, room) {
