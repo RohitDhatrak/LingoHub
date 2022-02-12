@@ -10,11 +10,22 @@ import {
 import { theme } from "../theme";
 import { getLanguageList } from "../utils/getLanguageList";
 import { useReducerContext } from "../context/reducerContext";
+import { useEffect } from "react";
 
 export function Profile({ route }) {
     const navigation = useNavigation();
     const { user: userData, dispatch } = useReducerContext();
     const user = route?.params?.user ? route.params.user : userData;
+    const doesRoomExist = route?.params?.doesRoomExist;
+
+    useEffect(() => {
+        navigation.getParent()?.setOptions({ tabBarStyle: undefined });
+        if (doesRoomExist)
+            return () =>
+                navigation
+                    .getParent()
+                    ?.setOptions({ tabBarStyle: { display: "none" } });
+    }, [navigation]);
 
     return (
         <ScrollView style={styles.container}>
@@ -25,8 +36,7 @@ export function Profile({ route }) {
                 />
                 <View style={styles.textContainer}>
                     <Text style={styles.name}>{user.name}</Text>
-
-                    {userData._id === user._id ? (
+                    {userData._id === user._id && (
                         <TouchableOpacity
                             style={[styles.button]}
                             onPress={() =>
@@ -35,7 +45,8 @@ export function Profile({ route }) {
                         >
                             <Text>Edit Profile</Text>
                         </TouchableOpacity>
-                    ) : (
+                    )}
+                    {userData._id !== user._id && !doesRoomExist && (
                         <TouchableOpacity
                             style={[styles.button, styles.messageButton]}
                             onPress={() => {
