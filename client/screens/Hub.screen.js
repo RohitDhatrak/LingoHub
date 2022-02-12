@@ -1,26 +1,9 @@
-import { useEffect } from "react";
 import { StyleSheet, View, Text, FlatList, Alert } from "react-native";
 import { ChatRoom } from "../components/ChatRoom";
 import { useReducerContext } from "../context/reducerContext";
-import { getChatRooms } from "../services/chatRooms";
 
 export function Hub() {
-    const { user, dispatch, chatRooms } = useReducerContext();
-
-    useEffect(() => {
-        async function getData() {
-            try {
-                const { rooms } = await getChatRooms(user._id);
-                dispatch({ type: "SET_CHAT_ROOMS", payload: rooms });
-            } catch (error) {
-                Alert.alert(
-                    "Error",
-                    "Something went wrong while loading your messages"
-                );
-            }
-        }
-        getData();
-    }, []);
+    const { chatRooms } = useReducerContext();
 
     if (chatRooms.length === 0) {
         return (

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
+import { useCallback, useEffect, useRef } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Alert, Text, View } from "react-native";
 import { HomeIcon, ProfileIcon, FindIcon } from "../assets/Icons";
@@ -10,7 +11,7 @@ import { Auth } from "./Auth.navigation";
 import { getUser } from "../services/userData";
 import { useAuthentication } from "../utils/useAuthentication";
 import Constants from "expo-constants";
-import { io } from "socket.io-client";
+import { getChatRooms } from "../services/chatRooms";
 
 const Tabs = createBottomTabNavigator();
 
@@ -56,6 +57,8 @@ export function Application() {
                 try {
                     const { user } = await getUser(authUser.email);
                     dispatch({ type: "SET_USER", payload: user });
+                    const { rooms } = await getChatRooms(user._id);
+                    dispatch({ type: "SET_CHAT_ROOMS", payload: rooms });
                     setIsLoading(false);
                 } catch (error) {
                     setIsLoading(false);
