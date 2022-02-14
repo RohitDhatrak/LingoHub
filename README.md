@@ -1,5 +1,7 @@
 ### About
-LingoHub is a real-time chat application made with React Native where you can interact with native speakers of the language you are trying to learn. To try the app go to your play/app store and download the Expo app then scan the QR code given in the link below.
+LingoHub is a real-time chat application made with React Native where you can interact with native speakers of the language you are trying to learn.
+
+To try the app go to the play store and download a app called Expo then scan the QR code given in this [link](https://expo.dev/@rohitdhatrak/LingoHub).
 
 ### Preview
 adding soon
@@ -8,7 +10,7 @@ adding soon
 React Native, socket.io, Node, Express, MongoDB, mongoose, firebase-auth
 
 ### Things I want to improve/explore further
-- Adding voice calling
+- Voice calling
 - Learn how e2e encryption is done
 
 ### Connect With Me
