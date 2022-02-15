@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { theme } from "../theme";
 import { useReducerContext } from "../context/reducerContext";
+import { getDateOrTime } from "../utils/getTime";
 const _ = require("lodash");
 
 export function ChatRoom({ room }) {
@@ -41,10 +42,7 @@ export function ChatRoom({ room }) {
                         {room.messages[room.messages.length - 1]?.body}
                     </Text>
                     <Text style={styles.timeContainer}>
-                        {new Date(room.updatedAt).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
+                        {getDateOrTime(room.updatedAt)}
                     </Text>
                 </View>
             </View>
