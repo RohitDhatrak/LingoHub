@@ -4,10 +4,16 @@ LingoHub is a real-time chat application made with React Native where you can in
 To try the app go to the play store and download a app called Expo then scan the QR code given in this [link](https://expo.dev/@rohitdhatrak/LingoHub).
 
 ### Preview
-adding soon
+adding soon 
 
 ### Tech Stack
 React Native, socket.io, Node, Express, MongoDB, mongoose, firebase-auth
+
+### Features
+- Instant messaging using websockets
+- Search for people based on language, interests
+- Add introduction, interests and hobbies
+- Add known languages and languages you are learning 
 
 ### Things I want to improve/explore further
 - Voice calling
