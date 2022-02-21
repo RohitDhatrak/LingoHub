@@ -7,7 +7,7 @@ To try the app go to the play store and download an app called Expo then scan th
 adding soon 
 
 ### Tech Stack
-React Native, socket.io, Node, Express, MongoDB, mongoose, firebase-auth
+React Native, socket.io, Node, Express, MongoDB, mongoose, flexsearch, firebase-auth
 
 ### Features
 - Instant messaging using websockets
