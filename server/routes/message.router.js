@@ -10,8 +10,10 @@ router.route("/:roomId").post(async (req, res) => {
         const { body, receiverId, senderId } = req.body;
         const room =
             roomId === "undefined" ? null : await ChatRoom.findById(roomId);
-        const user = await User.findById(senderId);
-        const partner = await User.findById(receiverId);
+        const [user, partner] = await Promise.all([
+            User.findById(senderId),
+            User.findById(receiverId),
+        ]);
 
         if (!user || !partner)
             return res.status(404).json({ message: "User not found" });
@@ -22,25 +24,28 @@ router.route("/:roomId").post(async (req, res) => {
                     members: [senderId, receiverId],
                     messages: [],
                 });
-                await newRoom.save();
 
                 user.partners.push(receiverId);
                 partner.partners.push(senderId);
-                await user.save();
-                await partner.save();
 
                 const newMessage = new Message({
                     sender: senderId,
                     roomId: newRoom._id,
                     body,
                 });
-                await newMessage.save();
 
                 newRoom.messages.push(newMessage._id);
                 newRoom.unreadCount = [0, 1];
-                await newRoom.save();
-                await newRoom.populate("messages");
-                await newRoom.populate("members");
+
+                await Promise.all([
+                    user.save(),
+                    partner.save(),
+                    newMessage.save(),
+                    newRoom.save(),
+                    newRoom.populate("messages"),
+                    newRoom.populate("members"),
+                ]);
+
                 res.status(200).json({
                     message: newMessage,
                     room: newRoom,
@@ -57,14 +62,13 @@ router.route("/:roomId").post(async (req, res) => {
                 roomId: roomId,
                 body,
             });
-            await newMessage.save();
 
             room.messages.push(newMessage._id);
             const receiverIndex = room.members.findIndex(
                 (member) => member.valueOf() === receiverId
             );
             room.unreadCount[receiverIndex] += 1;
-            await room.save();
+            await Promise.all([newMessage.save(), room.save()]);
             res.status(200).json({ message: newMessage });
         }
     } catch (err) {
