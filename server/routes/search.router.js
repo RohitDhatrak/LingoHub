@@ -6,7 +6,7 @@ const { usersIndex } = require("../utils/generateSearchIndex");
 router.route("/").post(async (req, res) => {
     try {
         const { query } = req.body;
-        const users = usersIndex.search(query);
+        const users = [...new Set(usersIndex.search(query))];
         const userDocs = [];
         for (const user of users) {
             const userDoc = await User.findOne({ _id: user });
