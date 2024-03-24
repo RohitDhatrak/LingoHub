@@ -31,7 +31,7 @@ export function Application() {
     }, [socket, user]);
 
     useEffect(() => {
-        socket.current = io(Constants.manifest.extra.socketEndpoint, {
+        socket.current = io(Constants.expoConfig.extra.socketEndpoint, {
             transports: ["websocket"],
             jsonp: false,
         });

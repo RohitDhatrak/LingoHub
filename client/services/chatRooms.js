@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 export async function getChatRooms(userId) {
     try {
         const response = await axios.get(
-            `${Constants.manifest?.extra?.apiEndpoint}/room/${userId}`
+            `${Constants.expoConfig?.extra?.apiEndpoint}/room/${userId}`
         );
         return response.data;
     } catch (error) {
@@ -15,7 +15,7 @@ export async function getChatRooms(userId) {
 export async function markAsRead(userId, roomId) {
     try {
         const response = await axios.post(
-            `${Constants.manifest?.extra?.apiEndpoint}/room/${userId}`,
+            `${Constants.expoConfig?.extra?.apiEndpoint}/room/${userId}`,
             { roomId }
         );
         return response.data;

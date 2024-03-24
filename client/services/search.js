@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 export async function getSearchData(query) {
     try {
         const response = await axios.post(
-            `${Constants.manifest?.extra?.apiEndpoint}/search`,
+            `${Constants.expoConfig?.extra?.apiEndpoint}/search`,
             { query }
         );
         return response.data;

@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 export async function createUser(email, name) {
     try {
         const response = await axios.post(
-            `${Constants.manifest?.extra?.apiEndpoint}/user/${email}`,
+            `${Constants.expoConfig?.extra?.apiEndpoint}/user/${email}`,
             { name }
         );
         return response.data;
@@ -16,7 +16,7 @@ export async function createUser(email, name) {
 export async function deleteUser(email) {
     try {
         const response = await axios.delete(
-            `${Constants.manifest?.extra?.apiEndpoint}/user/${email}`
+            `${Constants.expoConfig?.extra?.apiEndpoint}/user/${email}`
         );
         return response.data;
     } catch (error) {
@@ -27,7 +27,7 @@ export async function deleteUser(email) {
 export async function getUser(email) {
     try {
         const response = await axios.get(
-            `${Constants.manifest?.extra?.apiEndpoint}/user/${email}`
+            `${Constants.expoConfig?.extra?.apiEndpoint}/user/${email}`
         );
         return response.data;
     } catch (error) {
@@ -38,7 +38,7 @@ export async function getUser(email) {
 export async function getUsers(email) {
     try {
         const response = await axios.get(
-            `${Constants.manifest?.extra?.apiEndpoint}/user`
+            `${Constants.expoConfig?.extra?.apiEndpoint}/user`
         );
         return response.data;
     } catch (error) {
@@ -57,7 +57,7 @@ export async function updateUser(
 ) {
     try {
         const response = await axios.patch(
-            `${Constants.manifest?.extra?.apiEndpoint}/user/${email}`,
+            `${Constants.expoConfig?.extra?.apiEndpoint}/user/${email}`,
             { name, profilePicture, bio, hobbies, known, learning }
         );
         return response.data;
